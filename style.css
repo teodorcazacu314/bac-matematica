@@ -731,6 +731,17 @@ p:last-child {
   text-align: center;
 }
 
+.about-photo {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+  border: 3px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  display: block;
+}
+
 .about-photo-placeholder {
   width: 200px;
   height: 200px;
