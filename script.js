@@ -1,29 +1,18 @@
-/* ============================================
-   MATEMATICĂ BAC — Landing Page Scripts
-   Minimal, performant JavaScript
-   ============================================ */
+
 
 (function () {
   'use strict';
 
-  /* -----------------------------------------
-     CONFIGURATION
-     ----------------------------------------- */
+  
   const CONFIG = {
-    // TODO: Replace with your real Google Analytics 4 Measurement ID
-    GA_MEASUREMENT_ID: 'GA_MEASUREMENT_ID',
 
-    // Endpoint for form submissions - sends straight to teodorcazacu314@gmail.com
     FORM_ENDPOINT: 'https://formsubmit.co/ajax/teodorcazacu314@gmail.com',
 
-    // Scroll thresholds
     HEADER_SCROLL_THRESHOLD: 50,
     STICKY_CTA_THRESHOLD: 600,
   };
 
-  /* -----------------------------------------
-     DOM ELEMENTS
-     ----------------------------------------- */
+  
   const $ = (sel, ctx = document) => ctx.querySelector(sel);
   const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
 
@@ -37,9 +26,7 @@
   const faqItems = $$('.faq-item');
   const revealElements = $$('.reveal');
 
-  /* -----------------------------------------
-     UTM PARAMETER CAPTURE
-     ----------------------------------------- */
+  
   function captureUTMParams() {
     const params = new URLSearchParams(window.location.search);
     const utmFields = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
@@ -53,9 +40,7 @@
     });
   }
 
-  /* -----------------------------------------
-     MOBILE MENU
-     ----------------------------------------- */
+  
   function initMobileMenu() {
     if (!mobileMenuBtn || !mobileMenu) return;
 
@@ -66,7 +51,6 @@
       document.body.style.overflow = isActive ? 'hidden' : '';
     });
 
-    // Close menu when clicking a link
     $$('.mobile-nav-link', mobileMenu).forEach((link) => {
       link.addEventListener('click', () => {
         mobileMenuBtn.classList.remove('active');
@@ -76,7 +60,6 @@
       });
     });
 
-    // Close menu on CTA button click inside mobile menu
     const mobileCta = $('.btn', mobileMenu);
     if (mobileCta) {
       mobileCta.addEventListener('click', () => {
@@ -88,9 +71,7 @@
     }
   }
 
-  /* -----------------------------------------
-     HEADER SCROLL EFFECT
-     ----------------------------------------- */
+  
   function initHeaderScroll() {
     if (!header) return;
 
@@ -114,9 +95,7 @@
     onScroll();
   }
 
-  /* -----------------------------------------
-     STICKY CTA (MOBILE)
-     ----------------------------------------- */
+  
   function initStickyCta() {
     if (!stickyCta) return;
 
@@ -129,7 +108,6 @@
           const scrollY = window.scrollY;
           const shouldShow = scrollY > CONFIG.STICKY_CTA_THRESHOLD;
 
-          // Hide sticky CTA when evaluation section is in view
           let hideForEvaluation = false;
           if (evaluationSection) {
             const rect = evaluationSection.getBoundingClientRect();
@@ -151,9 +129,7 @@
     window.addEventListener('scroll', onScroll, { passive: true });
   }
 
-  /* -----------------------------------------
-     SMOOTH SCROLLING
-     ----------------------------------------- */
+  
   function initSmoothScroll() {
     $$('a[href^="#"]').forEach((anchor) => {
       anchor.addEventListener('click', (e) => {
@@ -165,7 +141,6 @@
           e.preventDefault();
           target.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-          // Track CTA clicks
           if (anchor.classList.contains('btn-primary') || anchor.classList.contains('btn-secondary')) {
             trackEvent('cta_click', {
               cta_text: anchor.textContent.trim(),
@@ -177,9 +152,7 @@
     });
   }
 
-  /* -----------------------------------------
-     FAQ ACCORDION
-     ----------------------------------------- */
+  
   function initFAQ() {
     faqItems.forEach((item) => {
       const question = $('.faq-question', item);
@@ -190,7 +163,6 @@
       question.addEventListener('click', () => {
         const isActive = item.classList.contains('active');
 
-        // Close all other FAQ items
         faqItems.forEach((other) => {
           if (other !== item) {
             other.classList.remove('active');
@@ -201,7 +173,6 @@
           }
         });
 
-        // Toggle current item
         if (isActive) {
           item.classList.remove('active');
           answer.style.maxHeight = '0';
@@ -215,21 +186,17 @@
     });
   }
 
-  /* -----------------------------------------
-     FORM VALIDATION & SUBMISSION
-     ----------------------------------------- */
+  
   function initForm() {
     if (!evaluationForm) return;
 
     evaluationForm.addEventListener('submit', (e) => {
       e.preventDefault();
 
-      // Clear previous errors
       $$('.form-group.error', evaluationForm).forEach((group) => {
         group.classList.remove('error');
       });
 
-      // Validate required fields
       let isValid = true;
       const requiredFields = $$('[required]', evaluationForm);
 
@@ -241,7 +208,6 @@
         }
       });
 
-      // Validate email format
       const emailField = $('#form-email', evaluationForm);
       if (emailField && emailField.value.trim()) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -252,7 +218,6 @@
         }
       }
 
-      // Validate phone format (basic Romanian phone)
       const phoneField = $('#form-phone', evaluationForm);
       if (phoneField && phoneField.value.trim()) {
         const phoneClean = phoneField.value.replace(/[\s\-\(\)]/g, '');
@@ -264,7 +229,6 @@
         }
       }
 
-      // Validate GDPR checkbox
       const gdprCheckbox = $('#form-gdpr', evaluationForm);
       if (gdprCheckbox && !gdprCheckbox.checked) {
         isValid = false;
@@ -281,7 +245,7 @@
       }
 
       if (!isValid) {
-        // Scroll to first error
+
         const firstError = $('.form-group.error', evaluationForm) || gdprCheckbox?.closest('.form-checkbox');
         if (firstError) {
           firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -289,46 +253,16 @@
         return;
       }
 
-      // Collect form data
       const formData = new FormData(evaluationForm);
 
-      // If there's a real form endpoint, submit to it
-      if (CONFIG.FORM_ENDPOINT) {
-        submitForm(formData);
-      } else {
-        // -----------------------------------------------------------
-        // TODO: INTEGRATE FORM SUBMISSION HERE
-        // -----------------------------------------------------------
-        // Option 1: Formspree (free tier)
-        //   Set CONFIG.FORM_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID'
-        //
-        // Option 2: Google Forms
-        //   Map fields to Google Form entry IDs and submit via fetch
-        //
-        // Option 3: Netlify Forms
-        //   Add netlify attribute to form and deploy on Netlify
-        //
-        // Option 4: EmailJS
-        //   Use EmailJS SDK to send form data via email
-        //
-        // For now, we show the success message to demonstrate the flow.
-        // -----------------------------------------------------------
-        console.log('Form submission (no backend configured):');
-        for (const [key, value] of formData.entries()) {
-          console.log(`  ${key}: ${value}`);
-        }
+      submitForm(formData);
 
-        showFormSuccess();
-      }
-
-      // Track form submission
       trackEvent('form_submit', {
         form_name: 'evaluation_request',
         utm_source: formData.get('utm_source') || 'direct',
       });
     });
 
-    // Clear error on input
     $$('.form-input, .form-select, .form-textarea', evaluationForm).forEach((input) => {
       input.addEventListener('input', () => {
         const group = input.closest('.form-group');
@@ -370,13 +304,10 @@
     if (formSuccess) formSuccess.classList.add('active');
   }
 
-  /* -----------------------------------------
-     SCROLL REVEAL (IntersectionObserver)
-     ----------------------------------------- */
+  
   function initScrollReveal() {
     if (!revealElements.length) return;
 
-    // Check for reduced motion preference
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       revealElements.forEach((el) => el.classList.add('revealed'));
       return;
@@ -400,9 +331,7 @@
     revealElements.forEach((el) => observer.observe(el));
   }
 
-  /* -----------------------------------------
-     ACTIVE NAV LINK HIGHLIGHTING
-     ----------------------------------------- */
+  
   function initActiveNav() {
     const sections = $$('section[id]');
     const navLinks = $$('.nav-link');
@@ -429,20 +358,13 @@
     sections.forEach((section) => observer.observe(section));
   }
 
-  /* -----------------------------------------
-     GOOGLE ANALYTICS 4 — EVENT TRACKING
-     ----------------------------------------- */
+  
   function trackEvent(eventName, params = {}) {
-    if (typeof gtag === 'function' && CONFIG.GA_MEASUREMENT_ID !== 'GA_MEASUREMENT_ID') {
+    if (typeof gtag === 'function') {
       gtag('event', eventName, params);
-    }
-    // Log events in development
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-      console.log(`[Analytics] ${eventName}`, params);
     }
   }
 
-  // Track scroll depth
   function initScrollTracking() {
     const milestones = [25, 50, 75, 100];
     const tracked = new Set();
@@ -472,9 +394,7 @@
     window.addEventListener('scroll', onScroll, { passive: true });
   }
 
-  /* -----------------------------------------
-     INITIALIZATION
-     ----------------------------------------- */
+  
   function init() {
     captureUTMParams();
     initMobileMenu();
@@ -488,7 +408,6 @@
     initScrollTracking();
   }
 
-  // Run when DOM is ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
